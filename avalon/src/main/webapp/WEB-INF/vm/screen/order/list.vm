@@ -1,0 +1,5 @@
+订单列表页
+
+#if($shiroHelper.isPermitted('op_del_order'))
+	<a>删除订单</a>
+#end

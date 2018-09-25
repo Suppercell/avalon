@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<config mode="client" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+	xsi:noNamespaceSchemaLocation="config.xsd">
+	<servers>
+		<server ip="192.168.51.107" port="2280" http-port="8091" />
+	</servers>
+	<domain id="avalon" enable="true" />
+</config>

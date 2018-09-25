@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO" packages="com.avalon.common.cat.appender">
+
+	<properties>
+		<property name="LOG_HOME">${sys:log.path}</property>
+		<property name="LOG_LEVEL">${sys:log.level}</property>
+		<property name="LOG_LEVEL_SQL">${sys:log.level.sql}</property>	
+	</properties>
+
+  <Appenders>
+     <Console name="CONSOLE" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} %msg%n"/>
+     </Console>
+
+	 <!-- 这个会打印出所有的info及以下级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
+	 <RollingFile name="ALL" fileName="${LOG_HOME}/all.log"
+	              filePattern="${LOG_HOME}/%d{yyyyMM}/all-%d{yyyyMMdd}-%i.log">
+	     <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->        
+	     <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} %msg%n"/>
+	     <Policies>
+	         <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+	         <SizeBasedTriggeringPolicy size="100 MB" />  
+	     </Policies>
+	 </RollingFile>
+
+	 <RollingFile name="ERROR" fileName="${LOG_HOME}/error.log"
+	              filePattern="${LOG_HOME}/%d{yyyyMM}/error-%d{yyyyMMdd}-%i.log">
+	     <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->        
+	     <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+	     <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} %msg%n"/>
+	     <Policies>
+	         <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+	         <SizeBasedTriggeringPolicy size="100 MB" />  
+	     </Policies>
+	 </RollingFile>
+	 
+	 <RollingFile name="SQL" fileName="${LOG_HOME}/sql.log"
+	              filePattern="${LOG_HOME}/%d{yyyyMM}/sql-%d{yyyyMMdd}-%i.log">
+	     <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->        
+	     <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} %msg%n"/>
+	     <Policies>
+	         <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+	         <SizeBasedTriggeringPolicy size="100 MB" />  
+	     </Policies>
+	 </RollingFile>
+	 
+	 
+	 <CatAppender name="catAppender">
+	    <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+        <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} %msg%n" />
+     </CatAppender>	
+  </Appenders>
+
+  <Loggers>
+    <Root level="${LOG_LEVEL}">
+      <AppenderRef ref="CONSOLE"/>
+      <AppenderRef ref="ALL"/>
+      <AppenderRef ref="catAppender"/>
+      <AppenderRef ref="ERROR"/>
+      
+    </Root>
+    
+    <logger name="com.blderp.common.dao" level="${LOG_LEVEL_SQL}" additivity="false">
+        <AppenderRef ref="SQL"/>
+        <AppenderRef ref="CONSOLE"/>
+    </logger>
+ 
+  </Loggers>
+</Configuration>

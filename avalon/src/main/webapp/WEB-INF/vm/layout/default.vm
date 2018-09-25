@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="keywords" content="运营中心">
+		<meta name="description" content="运营中心">
+		<title>运营中心平台</title>
+	</head>
+	<body>
+		<div class="topnav">
+	    <div class="cnavmenu">
+	      <nav class="main-nav" id="nav">
+	        <ul>
+				#set($mainMenuList = $menuHelper.getMainMenus())
+				#foreach( $item in $mainMenuList )
+					#if($shiroHelper.isPermitted($item.permission))
+						#if($item.menus)
+							#foreach( $m in $item.menus)
+								#if($shiroHelper.isPermitted($m.permission))
+									<li class="parent-head-tag" ><a href="$m.url"><span>$item.name</span></a></li>
+									#break
+								#end
+							#end
+						#end
+					#end
+				#end
+	        </ul>
+	      </nav>
+	    </div>
+	  </div>
+	  $screen_content				    
+	</body>
+</html>
+

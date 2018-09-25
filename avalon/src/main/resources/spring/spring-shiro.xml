@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+	 <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->    
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>   
+        
+    <!-- AOP式方法级权限检查  -->  
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor">    
+        <property name="proxyTargetClass" value="true" />    
+    </bean>         
+	     
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">    
+        <property name="securityManager" ref="securityManager"/>    
+    </bean>      
+       
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">  
+        <!--单个realm使用realm,如果有多个realm，使用realms属性代替-->  
+        <property name="realm" ref="shiroRealm" />
+        <property name="cacheManager" ref="cacheManager" /> 
+        <property name="sessionManager" ref="defaultWebSessionManager" />
+    </bean>     
+     <!--realm配置，realm是shiro的桥梁，它主要是用来判断subject是否可以登录及权限等-->  
+    <bean id="shiroRealm" class="com.avalon.shiro.ShiroRealm"></bean>  
+    <bean id="redisCacheManager"  class="com.avalon.shiro.RedisCacheManager"></bean>
+    <bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager"/>
+     <!-- session会话存储的实现类 -->
+    <bean id="shiroRedisSessionDAO" class="com.avalon.shiro.RedisSessionDao"></bean>
+    <bean id="defaultWebSessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">    
+        <!-- session存储的实现 -->  
+        <property name="sessionDAO" ref="shiroRedisSessionDAO" />  
+
+        <!-- 设置全局会话超时时间，默认30分钟(1800000) -->  
+        <property name="globalSessionTimeout" value="1800000" />  
+
+        <!-- 是否在会话过期后会调用SessionDAO的delete方法删除会话 默认true -->  
+        <property name="deleteInvalidSessions" value="true" />  
+
+        <!-- 会话验证器调度时间 -->  
+        <property name="sessionValidationInterval" value="1800000" />  
+
+        <!-- 定时检查失效的session -->  
+        <property name="sessionValidationSchedulerEnabled" value="true" />     
+    </bean>  
+     
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">  
+		<!-- shiro的核心安全接口 -->  
+        <property name="securityManager" ref="securityManager" />  
+        
+        <!-- 没有权限或者失败后跳转的页面  不是必须的属性 不输入地址的话会自动寻找项目web项目的根目录下的”/login.jsp”页面-->  
+        <property name="loginUrl" value="/login.do" />  
+        
+        <!-- 登陆成功后要跳转的连接 -->  
+        <property name="successUrl" value="/loginSuccess.do" />  
+        
+        <!-- 未授权时要跳转的连接 -->  
+        <property name="unauthorizedUrl" value="/noAuth.do" />  
+        
+         <!-- shiro连接约束配置 -->  
+        <property name="filterChainDefinitions">  
+            <value>
+            	/login.do =anon
+            	/doLogin.do =anon 
+                /test/** = anon
+                /order/** = authc
+                /order/del.do =authc,perms[op_order_opeartion]
+                /finance/** =authc
+                /loginSuccess.do = authc
+            </value>  
+        </property>  
+    </bean>  
+    
+    <bean id="anyRoles" class="com.avalon.shiro.RolesAuthorizationFilter" />
+    
+	 <!-- 
+    	 /admin=authc,roles[admin]      表示用户必需已通过认证,并拥有admin角色才可以正常发起'/admin'请求
+
+		  /edit=authc,perms[admin:edit]  表示用户必需已通过认证,并拥有admin:edit权限才可以正常发起'/edit'请求
+		
+		  /home=user                     表示用户不一定需要已经通过认证,只需要曾经被Shiro记住过登录状态就可以正常发起'/home'请求
+		
+		
+		    各默认过滤器常用如下(注意URL Pattern里用到的是两颗星,这样才能实现任意层次的全匹配)
+		
+		  /admins/**=anon             无参,表示可匿名使用,可以理解为匿名用户或游客
+		
+		  /admins/user/**=authc       无参,表示需认证才能使用
+		
+		  /admins/user/**=authcBasic  无参,表示httpBasic认证
+		
+		  /admins/user/**=user        无参,表示必须存在用户,当登入操作时不做检查
+		
+		  /admins/user/**=ssl         无参,表示安全的URL请求,协议为https
+		
+		  /admins/user/**=perms[user:add:*]
+		
+		     参数可写多个,多参时必须加上引号,且参数之间用逗号分割,如/admins/user/**=perms["user:add:*,user:modify:*"]
+		
+		    当有多个参数时必须每个参数都通过才算通过,相当于isPermitedAll()方法
+		
+		  /admins/user/**=port[8081]
+		
+		     当请求的URL端口不是8081时,跳转到schemal://serverName:8081?queryString
+		
+		      其中schmal是协议http或https等,serverName是你访问的Host,8081是Port端口,queryString是你访问的URL里的?后面的参数
+		
+		  /admins/user/**=rest[user]
+		
+		     根据请求的方法,相当于/admins/user/**=perms[user:method],其中method为post,get,delete等
+		
+		  /admins/user/**=roles[admin]
+		
+		     参数可写多个,多个时必须加上引号,且参数之间用逗号分割,如/admins/user/**=roles["admin,guest"]
+		
+		    当有多个参数时必须每个参数都通过才算通过,相当于hasAllRoles()方法
+    -->   
+	
+</beans>

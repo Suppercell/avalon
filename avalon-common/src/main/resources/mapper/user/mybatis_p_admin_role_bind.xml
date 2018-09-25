@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.blderp.common.dao.user.AdminRoleBindDao"> 
+
+    <resultMap id="BaseResultMap" type="adminRoleBind">
+        <result column="id" property="id" />
+        <result column="p_admin_id" property="adminId" />
+        <result column="p_admin_role_id" property="adminRoleId" />
+        <result column="is_delete" property="isDelete" />
+        <result column="created_at" property="createdAt" />
+        <result column="created_by" property="createdBy" />
+        <result column="changed_at" property="changedAt" />
+        <result column="changed_by" property="changedBy" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        <![CDATA[
+              id ,
+              p_admin_id ,
+              p_admin_role_id ,
+              is_delete ,
+              created_at ,
+              created_by ,
+              changed_at ,
+              changed_by 
+        ]]>
+    </sql>
+    
+    <!-- ======================================================================== 
+      	自动生成sql
+    ========================================================================= -->
+    <!--根据ID查询记录-->
+    <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+      select <include refid="Base_Column_List" /> from p_admin_role_bind where id = #{id} and is_delete=0
+    </select>
+
+	<!--通过IDS查询多条记录-->
+    <select id="getByIds" resultMap="BaseResultMap">
+	   select <include refid="Base_Column_List"/> from p_admin_role_bind where id in  
+        <foreach item="item" index="index" collection="array" 
+                 open="(" separator="," close=")"> 
+                #{item}
+        </foreach> 
+	   and is_delete = 0  
+	</select>
+
+    <!--save保存-->
+    <insert id="save" parameterType="adminRoleBind" useGeneratedKeys="true" keyProperty="id" >
+      	insert into p_admin_role_bind 
+      	(
+      	<trim suffix="" suffixOverrides=",">       	
+		  	  <if test="adminId != null" >
+		        p_admin_id,
+		      </if> 
+		  	  <if test="adminRoleId != null" >
+		        p_admin_role_id,
+		      </if> 
+		  	  <if test="isDelete != null" >
+		        is_delete,
+		      </if> 
+		  	  <if test="createdAt != null" >
+		        created_at,
+		      </if> 
+		  	  <if test="createdBy != null" >
+		        created_by,
+		      </if> 
+		  	  <if test="changedAt != null" >
+		        changed_at,
+		      </if> 
+		  	  <if test="changedBy != null" >
+		        changed_by,
+		      </if> 
+        </trim>
+      	) values(
+      	<trim suffix="" suffixOverrides=","> 
+		  	  <if test="adminId != null" >
+		        #{adminId},
+		      </if> 
+		  	  <if test="adminRoleId != null" >
+		        #{adminRoleId},
+		      </if> 
+		  	  <if test="isDelete != null" >
+		        #{isDelete},
+		      </if> 
+		  	  <if test="createdAt != null" >
+		        #{createdAt},
+		      </if> 
+		  	  <if test="createdBy != null" >
+		        #{createdBy},
+		      </if> 
+		  	  <if test="changedAt != null" >
+		        #{changedAt},
+		      </if> 
+		  	  <if test="changedBy != null" >
+		        #{changedBy},
+		      </if> 
+	    </trim>
+      	)
+    </insert>
+    
+    <!--saveBatch批量保存-->
+    <insert id="saveBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" >
+      	insert into p_admin_role_bind 
+      	(
+              p_admin_id ,
+              p_admin_role_id ,
+              is_delete ,
+              created_at ,
+              created_by ,
+              changed_at ,
+              changed_by 
+      	) values
+      	<foreach collection="list" item="item" index="index" separator="," >  
+        (
+        	  #{item.adminId},
+        	  #{item.adminRoleId},
+        	  #{item.isDelete},
+        	  #{item.createdAt},
+        	  #{item.createdBy},
+        	  #{item.changedAt},
+        	  #{item.changedBy}
+        ) 
+    	</foreach>
+    </insert>
+    
+    <!--update更新-->
+    <update id="update" parameterType="adminRoleBind">
+      update p_admin_role_bind
+      	<set>
+      	<trim suffix="" suffixOverrides=",">   
+	      <if test="id != null" >
+	        id = #{id},
+	      </if> 
+	      <if test="adminId != null" >
+	        p_admin_id = #{adminId},
+	      </if> 
+	      <if test="adminRoleId != null" >
+	        p_admin_role_id = #{adminRoleId},
+	      </if> 
+	      <if test="isDelete != null" >
+	        is_delete = #{isDelete},
+	      </if> 
+	      <if test="createdAt != null" >
+	        created_at = #{createdAt},
+	      </if> 
+	      <if test="createdBy != null" >
+	        created_by = #{createdBy},
+	      </if> 
+	      <if test="changedAt != null" >
+	        changed_at = #{changedAt},
+	      </if> 
+	      <if test="changedBy != null" >
+	        changed_by = #{changedBy},
+	      </if> 
+	    </trim>  
+    	</set>
+      where id = #{id} and is_delete=0
+    </update>
+     
+    <!--updateBatch批量更新-->
+    <update id="updateBatch" parameterType="java.util.List">
+    	update p_admin_role_bind
+        <trim prefix="set" suffixOverrides=",">
+	      		<trim prefix="id=case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                     <if test="item.id !=null">
+                         when id=#{item.id} then #{item.id}
+                     </if>
+                 </foreach>
+            	</trim>
+	      		<trim prefix="p_admin_id=case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                     <if test="item.adminId !=null">
+                         when id=#{item.id} then #{item.adminId}
+                     </if>
+                 </foreach>
+            	</trim>
+	      		<trim prefix="p_admin_role_id=case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                     <if test="item.adminRoleId !=null">
+                         when id=#{item.id} then #{item.adminRoleId}
+                     </if>
+                 </foreach>
+            	</trim>
+	      		<trim prefix="is_delete=case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                     <if test="item.isDelete !=null">
+                         when id=#{item.id} then #{item.isDelete}
+                     </if>
+                 </foreach>
+            	</trim>
+	      		<trim prefix="created_at=case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                     <if test="item.createdAt !=null">
+                         when id=#{item.id} then #{item.createdAt}
+                     </if>
+                 </foreach>
+            	</trim>
+	      		<trim prefix="created_by=case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                     <if test="item.createdBy !=null">
+                         when id=#{item.id} then #{item.createdBy}
+                     </if>
+                 </foreach>
+            	</trim>
+	      		<trim prefix="changed_at=case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                     <if test="item.changedAt !=null">
+                         when id=#{item.id} then #{item.changedAt}
+                     </if>
+                 </foreach>
+            	</trim>
+	      		<trim prefix="changed_by=case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                     <if test="item.changedBy !=null">
+                         when id=#{item.id} then #{item.changedBy}
+                     </if>
+                 </foreach>
+            	</trim>
+    	</trim>
+    	where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+    
+    <sql id="query_base_sql">
+	      <if test="id != null" >
+	       and id = #{id}
+	      </if> 
+	      <if test="adminId != null" >
+	       and p_admin_id = #{adminId}
+	      </if> 
+	      <if test="adminRoleId != null" >
+	       and p_admin_role_id = #{adminRoleId}
+	      </if> 
+	      <if test="isDelete != null" >
+	       and is_delete = #{isDelete}
+	      </if> 
+	      <if test="createdAt != null" >
+	       and created_at = #{createdAt}
+	      </if> 
+	      <if test="createdBy != null" >
+	       and created_by = #{createdBy}
+	      </if> 
+	      <if test="changedAt != null" >
+	       and changed_at = #{changedAt}
+	      </if> 
+	      <if test="changedBy != null" >
+	       and changed_by = #{changedBy}
+	      </if> 
+    </sql>
+    
+    <!--query基础查询-->
+    <select id="query" resultMap="BaseResultMap" parameterType="adminRoleBind">
+	   select <include refid="Base_Column_List"/> from p_admin_role_bind where is_delete = 0  
+       <include refid="query_base_sql"></include>
+	</select>
+    
+     
+    <!-- ========================================================================
+     								自定义sql
+    ========================================================================= -->
+	
+	<!--query扩展查询-->
+    <select id="queryVo" resultMap="BaseResultMap" parameterType="adminRoleBindVo">
+	   select <include refid="Base_Column_List"/> from p_admin_role_bind where is_delete = 0  
+       <include refid="query_base_sql"></include>
+	</select>
+
+</mapper>

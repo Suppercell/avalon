@@ -1,0 +1,12 @@
+<#-- 本文件包含一些公共的函数,本文件会被其它模板自动include -->
+
+<#--过滤前缀-->
+<#macro filter prefix_arr sql_value value uppercase ><#local case1=false/><#local case2=false/><#list prefix_arr as x><#if sql_value?starts_with(x) && uppercase==false><#local case1=true/><#elseif sql_value?starts_with(x) && uppercase==true><#local case2=true/></#if></#list><#if case1==true>${value?substring(1)?uncap_first}<#elseif case2==true>${value?substring(1)?cap_first}<#else>${value}</#if></#macro>
+<#macro genGetterAndSetter propertyName,javaType>
+	public ${javaType} get${propertyName?cap_first}() {
+		return ${propertyName};
+	}
+	public void set${propertyName?cap_first}(${javaType} ${propertyName}) {
+		this.${propertyName} = ${propertyName};
+	}
+</#macro>

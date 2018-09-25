@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>
+		代码生成器配置文件:
+		1.会为所有的property生成property_dir属性,如pkg=com.company => pkg_dir=com/company
+		2.可以引用环境变量: ${env.JAVA_HOME} or System.properties: ${user.home},property之间也可以相互引用
+	</comment>
+
+
+	<!-- jsp namespace: web/${namespace}/${className}/list.jsp -->
+	<entry key="basePackage">com.avalon.common</entry>
+	
+	<!--指定输出模块目录，若没指定则取表如：p_user_token 取user-->  	
+	<entry key="module">user</entry>
+	
+	<entry key="outputDir">output</entry>
+	
+	<entry key="templateDir">template</entry>
+	<entry key="prefix">c,i,p,tb,f,o,s,e</entry>
+	<entry key="tables">p_admin,p_admin_role,p_admin_role_bind</entry>
+	<entry key="allSwitch">false</entry>
+
+	<entry key="jdbc_username">root</entry>
+	<entry key="jdbc_password">Senya!@34</entry>
+
+	<!-- oracle需要指定jdbc.schema,其它数据库忽略此项配置  -->
+	<entry key="jdbc.schema"></entry>
+	<entry key="jdbc.catalog"></entry>
+
+	<!-- 数据库类型映射  -->
+	<entry key="java_typemapping.java.sql.Timestamp">java.util.Date</entry>
+	<entry key="java_typemapping.java.sql.Date">java.util.Date</entry>
+	<entry key="java_typemapping.java.sql.Time">java.util.Date</entry>
+	<entry key="java_typemapping.java.lang.Byte">Integer</entry>
+	<entry key="java_typemapping.java.lang.Short">Integer</entry>
+	<entry key="java_typemapping.java.math.BigDecimal">Long</entry>
+	<entry key="java_typemapping.java.lang.Long">Long</entry>
+	<entry key="java_typemapping.java.lang.String">String</entry>
+	<entry key="java_typemapping.java.lang.Boolean">Integer</entry>
+
+	<!-- Mysql -->
+	<entry key="jdbc_url">jdbc:mysql://47.92.7.55:3306/Suppercell?characterEncoding=utf-8</entry>
+	<entry key="jdbc_driver">com.mysql.jdbc.Driver</entry>
+
+</properties>

@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<toolbox>
+	<xhtml>true</xhtml>
+	<tool>
+		<key>math</key>
+		<scope>application</scope>
+		<class>org.apache.velocity.tools.generic.MathTool</class>
+	</tool>
+	<tool>
+		<key>menuHelper</key>
+		<scope>application</scope>
+		<class>com.blderp.admin.common.menu.MenuHelper</class>
+	</tool>
+	<tool>
+		<key>shiroHelper</key>
+		<scope>application</scope>
+		<class>com.blderp.admin.shiro.ShiroHelper</class>
+	</tool>
+	<tool>
+        <key>res</key>
+        <scope>application</scope>
+        <class>com.blderp.admin.tools.ResourceTools</class>
+    </tool>
+</toolbox>
